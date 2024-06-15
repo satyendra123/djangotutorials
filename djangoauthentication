@@ -1,0 +1,54 @@
+#Authentication- authentication is about validating your credentials like username and password
+#autherisation - authorization is the process to determine whether the authenticated user has the access to the particular resources. it checks your rights to grant your access to resources such as information, database
+
+django.contrib.auth= C:\Users\Gourav\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\django\contrib\auth iske andar jayenge to isme ek file rhta hai models.py name se. isko agar hum open karenge to iske andar ek
+                      User name se class rhta hai pahle se. jo ki authentication ke liye rhta hai. actuall me hum jab python manage.py makemigrations aur python manage.py migrate ko run krte hai to hum xamp database me jakar dekhenge to waha ek User auth ke name se table ban jata hai
+                      jisme username, password, is_admin, is_superuser, is_staff role based authentication hota hai. so ye sare chiz isi User class me defined rhta hai models.py file ke. so man lo ki mujhe user auth table me ek aur column chahiye to mai
+                        direct is file me jakar change kar du yaa phir mai is class ko inherit karke apne code me iske properties ko use karunga. so isme ye mera code hai pura. ab hum is chiz ko isme samjhne ki kosis krte hai kuch kuch chize
+
+#NOTE-  so agar hum isme User class me jakar dekhte hai to User class me to ye kuch is tarah ka hota hai. means isme koi bhi code nahi likha hota hai. ye sari chize inherit karta hai AbstractUser class me se. ab hum AbstractUser class me jakar dekhte hai to class AbstractUser(AbstractBaseUser, PermissionsMixin):
+        means jo humara AbstractUser hota hai wo bhi inherit karta hai AbstractBaseUser aur permissionmixin se. AbstractUser me username, first_name, last_name, email, is_staff, is_active, date_joined ye tables banta hai aur ye sare fields isme diye hue hai
+ab agar bat aata hai to ye batao ki AbstractBaseUser me kya hota hoga ki hum use inherit krte hai to sayad usme kuch functions defines honge jaise setpassword se humara password hash form me jakar database me sav hota hai. same waise hi ek check password hota hai jo password ko match karta hai.
+aur permissionMixins ska agar hum dekhe to isme kuch queries likhi hoti hai ki admin ko kya kya access karna chahiye aur superuser kya kya access kar sakta hai kuch ye sab chize. kuch is tarike se
+EX-
+    def get_all_permissions(self, obj=None):
+        return _user_get_permissions(self, obj, "all")
+
+    def has_perm(self, perm, obj=None):
+        """
+        Return True if the user has the specified permission. Query all
+        available auth backends, but return immediately if any backend returns
+        True. Thus, a user who has permission from a single auth backend is
+        assumed to have permission in general. If an object is provided, check
+        permissions for that object.
+        """
+        # Active superusers have all permissions.
+        if self.is_active and self.is_superuser:
+            return True
+
+        # Otherwise we need to check the backends.
+        return _user_has_perm(self, perm, obj)
+
+    def has_perms(self, perm_list, obj=None):
+        """
+        Return True if the user has each of the specified permissions. If
+        object is passed, check if the user has all required perms for it.
+        """
+        if not is_iterable(perm_list) or isinstance(perm_list, str):
+            raise ValueError("perm_list must be an iterable of permissions.")
+        return all(self.has_perm(perm, obj) for perm in perm_list)
+
+    def has_module_perms(self, app_label):
+        """
+        Return True if the user has any permissions in the given app label.
+        Use similar logic as has_perm(), above.
+        """
+        # Active superusers have all permissions.
+        if self.is_active and self.is_superuser:
+            return True
+
+        return _user_has_module_perms(self, app_label)
+
+                
+
+                        
