@@ -56,3 +56,84 @@ EX-
 (3) get_short_name() - it gives only the first name
 (4) set_password(raw_password)- it sets the password in a hash format
 (5) set_unusable_password() - it marks the user as having no password set. this is not the same as having a blank string for a password. check_password() for this user will never return true. Doesn't save the user model
+(6) has_usable_password()- it returns false if set_unusable_password() has been called for this user
+(7) get_user_permission(obj=None)- ye hume btayega ki user ko kaon kaon sa permission diya gaya hai
+
+UserManager method() - The User model has a custom manager that has the following helper method(in addition to the method provided by BaseUserManager)
+(i) create_user(username, email=None, **extra_fields)- it creates , saves and returns as User
+(ii) authenticate(username=uname, password=pass)- it checks and match the username and password from the django backened
+(iii)
+
+
+
+                                                                                               TOPIC- Model Inheritance
+
+(i) Abstract Base class- 
+
+
+from django.db import models
+class Commoninfo(models.Model):
+   name=models.CharField(max_length=70)
+   age=models.IntegerField()
+   class Meta:
+       abstract=true
+
+Note- jab tk humne class Meta ke andar abstract=true nhi likha hai tb tk ye normal model rhta hai aur iska table banega database me lekin jaise hi hum isme ye likh dete hai to ye abstract class ban jata hai aur iska koi table nahi banta hai database me, aur abstract class ka koi manager bhi nahi banta hai
+
+
+class Student(Commoninfo):
+      fees=models.IntegerField()
+
+class Teacher(Commoninfo):
+      salary=models.IntegerField()
+
+#note- isme maine kya kiya hai ki instance object create kiya hai student aur teacher class ke liye. aur is objects ki madad se hum call kar sakte hai jo bhi information hume chahiye rhta hai
+# Creating instances of Student and Teacher
+student = Student.objects.create(name='John Doe', age=20, fees=1000)
+teacher = Teacher.objects.create(name='Jane Smith', age=30, salary=50000)
+
+# Accessing fields inherited from CommonInfo
+print(student.name)   # Output: John Doe
+print(teacher.age)    # Output: 30
+
+# Accessing fields specific to each subclass
+print(student.fees)   # Output: 1000
+print(teacher.salary) # Output: 50000
+
+
+
+#NOTE- 
+#login view function
+from django.contrib.auth import authenticate, login, logout
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+@csrf_exempt
+def user_login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)  
+        if user is not None:
+            login(request, user)
+            return JsonResponse({'message': 'Login successful'}, status=200)
+        else:
+            return JsonResponse({'error': 'Invalid credentials'}, status=400)
+    return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+#logout view function
+from django.contrib.auth import logout
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
+def user_logout(request):
+    if request.method == 'POST':
+        if request.user.is_authenticated:
+            logout(request)
+            return JsonResponse({'message': 'Logout successful'}, status=200)
+        else:
+            return JsonResponse({'error': 'User is not authenticated'}, status=400)
+
+    return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+
