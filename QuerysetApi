@@ -1,0 +1,5 @@
+# query set api se hum database se jitna bhi kaam hai wo sab kar sakte hai API ke through
+QuerySet API- Query set allow you to read the data from the database, filter it and order it
+
+Retrieving all objects-\
+a) all()- this method is used to retrieve all objects. this returns a copy of current query set. man lo ki table ka har ek row ek object hai aur usme se hum sare row means sare objects ko retrieve karna chahte hai to hum objects.all() method ka use krenge EX- Student.objects.all()
