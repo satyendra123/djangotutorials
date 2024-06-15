@@ -50,5 +50,9 @@ EX-
         return _user_has_module_perms(self, app_label)
 
                 
-
-                        
+#User objects method- isme kuch method defines hai jaise ki
+(1) get_username() - it returns the username for the user
+(2) get_full_name()- it returns the first name + last_name
+(3) get_short_name() - it gives only the first name
+(4) set_password(raw_password)- it sets the password in a hash format
+(5) set_unusable_password() - it marks the user as having no password set. this is not the same as having a blank string for a password. check_password() for this user will never return true. Doesn't save the user model
